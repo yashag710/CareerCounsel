@@ -16,8 +16,11 @@ exports.registerUser = async function(req,res){
                 let user = await userModel.create({
                 email, password : hash, fullname
                 });
-                let token = generateToken(user);
-                res.cookie("token" , token);
+                return res.status(200).json({
+                    success: true,
+                    user,
+                    message: "User created successfully"
+                })
             }
         });
     }); 
@@ -39,8 +42,10 @@ exports.loginUser = async function(req,res){
     bcrypt.compare(password , user.password , function(err, result){
         if(result){
             let token = generateToken(user);
-            res.cookie("token" , token);
-            res.redirect("/shop");
+            res.cookie("token" , token).status(200).json({
+                success: true,
+                message: "User logged in"
+            });
         }
         else{
             return res.status(501).send("Incorrect credentials");
@@ -50,7 +55,5 @@ exports.loginUser = async function(req,res){
 
 exports.logout = async function(req,res){
     res.cookie("token" , "");
-    req.flash("error" , "Succesfully logged out");
-    res.redirect("/");
 }
 
