@@ -28,7 +28,7 @@ router.post("/datacheck", dataCheck);  // Fixed typo from `oost` to `post`
 // Career Form Route (Protected)
 router.post("/careerform", upload.single("resume"), async (req, res) => {
     try {
-        const userToken = req.cookies.userToken; // Fetching the cookie
+        const userToken = req.cookies.token; // Fetching the cookie
         if (!userToken) {
             return res.status(401).json({ message: "No cookie found!" });
         }
