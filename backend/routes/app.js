@@ -40,12 +40,12 @@ router.post("/careerform", upload.single("resume"), async (req, res) => {
 
         // Get request data
         const { experience, skills, result } = req.body;
-        const resume = req.file ? req.file.buffer : null;  // Handle resume file
+        // const resume = req.file ? req.file.buffer : null;  // Handle resume file
 
         // Update User Profile
         let updatedUser = await userModel.findOneAndUpdate(
             { email },
-            { resume, experience, skills, result },
+            { experience, skills, result },
             { new: true, runValidators: true }
         );
 

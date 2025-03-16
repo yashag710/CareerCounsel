@@ -102,7 +102,7 @@ const CareerPathForm = () => {
     setLoading(true);
     setMessage("");
     setError(null);
-  
+    
     // Extract skill values and join with semicolon
     const skillsStr = selectedSkills.map(option => option.value).join(';');
   
