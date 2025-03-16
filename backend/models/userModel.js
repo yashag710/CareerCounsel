@@ -13,9 +13,14 @@ const userSchema = mongoose.Schema({
         type : String,
         required : true
     },
+    image: Buffer,
     skills : {
         type : [String],
         default : [""],
+        required : true
+    },
+    interests : {
+        type : String, 
         required : true
     },
     city : String,

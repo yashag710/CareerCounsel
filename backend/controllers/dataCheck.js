@@ -11,7 +11,7 @@ exports.dataCheck = async function (req, res) {
     }
 
     if (user.skills && user.skills.length > 0) {
-      return res.redirect(`/userdash?email=${user.email}`); 
+      return res.redirect("/userdash"); 
     } else {
       return res.redirect("/careerform");
     }
