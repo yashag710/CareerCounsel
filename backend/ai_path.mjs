@@ -4,7 +4,7 @@ import userModel from "./models/userModel.js";
 import careerModel from "./models/careerModel.js";
 import jwt from 'jsonwebtoken';
 
-const token = "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";
+const token = process.env.AI_TOKEN;
 const endpoint = "https://models.inference.ai.azure.com";
 const modelName = "gpt-4o";
 
