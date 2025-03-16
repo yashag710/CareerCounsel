@@ -7,6 +7,7 @@ const { getUserProfile } = require("../controllers/getUserProfile");
 const { dataCheck } = require("../controllers/dataCheck");
 const userModel = require("../models/userModel");
 const multer = require("multer");
+const { analyzeCareer } = require("../ai_path.mjs");  // Add this import
 
 const upload = multer();  // Multer for file uploads
 
@@ -53,9 +54,33 @@ router.post("/careerform", upload.single("resume"), async (req, res) => {
             return res.status(404).json({ message: "User not found!" });
         }
 
-        res.redirect("/userdash");
+        res.redirect("/analyze-career");
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// Update the analyze-career route
+router.get("/analyze-career", isLoggedIn, async (req, res) => {
+    try {
+        // Get user email from token
+        const userToken = req.cookies.token;
+        const decoded = jwt.verify(userToken, process.env.JWT_KEY);
+        const email = decoded.email;
+
+        // Fetch user data from MongoDB
+        const user = await userModel.findOne({ email });
+        if (!user || !user.result) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "User result not found" 
+            });
+        }
+
+        const analysis = await analyzeCareer(user.result);
+        res.json({ success: true, analysis });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
