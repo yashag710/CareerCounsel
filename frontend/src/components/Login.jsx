@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { ArrowRight, Mail, Lock, User } from 'lucide-react';
+<<<<<<< HEAD
+import axios from 'axios';
+
+=======
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+>>>>>>> 9b5964a7a06bc769820cbc47d13ee0c2483afeea
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -47,6 +52,18 @@ function Login() {
           id: loadingToast,
         });
 
+<<<<<<< HEAD
+  const handleSubmit = async (e) => {
+        e.preventDefault();
+        const res = await axios.post("http://localhost:3000/api/userdash", {
+          email,
+          password,
+          name
+        });
+        // Handle form submission
+        console.log(res);
+        console.log(isLogin ? 'Login' : 'Signup', { email, password, name });
+=======
         if(isLogin){
           navigate("/userdash")
         }
@@ -76,6 +93,7 @@ function Login() {
       console.error('Network error:', error);
     } finally {
       setLoading(false);
+>>>>>>> 9b5964a7a06bc769820cbc47d13ee0c2483afeea
     }
   }
 

@@ -16,11 +16,7 @@ exports.registerUser = async function(req,res){
                 let user = await userModel.create({
                 email, password : hash, fullname
                 });
-                return res.status(200).json({
-                    success: true,
-                    user,
-                    message: "User created successfully"
-                })
+                res.redirect("/datacheck");
             }
         });
     }); 
@@ -46,6 +42,7 @@ exports.loginUser = async function(req,res){
                 success: true,
                 message: "User logged in"
             });
+            res.redirect("/datacheck");
         }
         else{
             return res.status(501).json({
