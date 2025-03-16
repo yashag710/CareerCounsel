@@ -11,9 +11,13 @@ exports.dataCheck = async function (req, res) {
     }
 
     if (user.skills && user.skills.length > 0) {
-      return res.redirect("/userdash"); 
+      return res.status(200).json({
+        check : true
+      })
     } else {
-      return res.redirect("/careerform");
+      return res.status(200).json({
+        check : false
+      })
     }
   } catch (err) {
     console.error("Error in dataCheck:", err.message);

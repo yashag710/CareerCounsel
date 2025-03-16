@@ -17,11 +17,11 @@ const userSchema = mongoose.Schema({
     skills : {
         type : [String],
         default : [""],
-        required : true
+        // required : true
     },
     interests : {
         type : String, 
-        required : true
+        // required : true
     },
     city : String,
     country : String,

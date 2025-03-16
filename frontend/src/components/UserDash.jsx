@@ -85,7 +85,7 @@ function UserDash() {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/getUserProfile`, {
+        const response = await fetch(`http://localhost:3000/api/getUserProfile`, {
           method: 'GET',
           credentials: 'include', // Important for cookies to be sent
           headers: {
