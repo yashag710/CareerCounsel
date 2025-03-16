@@ -3,13 +3,27 @@ import mongoose from 'mongoose';
 import userModel from "./models/userModel.js";
 import careerModel from "./models/careerModel.js";
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-const token = process.env.ai_token;
-const endpoint = process.env.endpoint;
-const modelName = process.env.model;
+// Load environment variables
+dotenv.config();
+
+// Access environment variables
+const token = process.env.OPENAI_API_KEY;
+const endpoint = process.env.OPENAI_API_ENDPOINT;
+const modelName = process.env.OPENAI_MODEL_NAME;
+
+// Validate required environment variables
+if (!token || !endpoint || !modelName) {
+  throw new Error('Missing required environment variables');
+}
 
 export async function analyzeCareer(result) {
   try {
+    if (!result) {
+      throw new Error('Career result parameter is required');
+    }
+
     const client = new OpenAI({ baseURL: endpoint, apiKey: token });
     const response = await client.chat.completions.create({
       messages: [
@@ -28,11 +42,12 @@ export async function analyzeCareer(result) {
     const analysisResult = response.choices[0].message.content;
     
     // Update or create career analysis in MongoDB
-    await careerModel.create(
+    const career = await careerModel.findOneAndUpdate(
       { name: result },
       { analysis: analysisResult },
       { upsert: true, new: true }
     );
+    
     return analysisResult;
   } catch (err) {
     console.error("Error occurred:", err);
@@ -40,7 +55,4 @@ export async function analyzeCareer(result) {
   }
 }
 
-// Example usage
-analyzeCareer().catch((err) => {
-  console.error("The sample encountered an error:", err);
-});
+// Remove the example usage as it's not properly configured
