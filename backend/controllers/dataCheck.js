@@ -1,24 +1,21 @@
-const express = require("express");
-const router = express.Router();
 const userModel = require("../models/userModel");
-
 exports.dataCheck = async function (req, res) {
   try {
-    const user = await userModel.findOne({ email: req.body.email }).select("skills");
+    const user = await userModel.findOne({ email: req.body.email }).select("experience");
 
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
 
-    if (user.skills && user.skills.length > 0) {
-      console.log(user.skills);
+    // If user.experience exists (is not null/undefined), check should be true
+    if (user.experience) {
       return res.status(200).json({
-        check : true
-      })
+        check: true,
+      });
     } else {
       return res.status(200).json({
-        check : false
-      })
+        check: false,
+      });
     }
   } catch (err) {
     console.error("Error in dataCheck:", err.message);
