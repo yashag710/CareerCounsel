@@ -16,17 +16,26 @@ exports.registerUser = async function(req,res){
                 let user = await userModel.create({
                 email, password : hash, fullname
                 });
-                res.redirect("/datacheck");
+                return res.status(200).json({
+                    success: true,
+                    user: user
+                })
             }
         });
     }); 
 }
 else {
-    return res.status(401).send("User exists");
+    return res.status(401).json({
+        success: false,
+        message: "Internal server error"
+    });
 }     
     }
     catch(err){
-        res.send(err.message);
+        res.status(500).json({
+            success: false,
+            message: "some internal server error"
+        });
     }
 }
 
@@ -42,7 +51,6 @@ exports.loginUser = async function(req,res){
                 success: true,
                 message: "User logged in"
             });
-            res.redirect("/datacheck");
         }
         else{
             return res.status(501).json({

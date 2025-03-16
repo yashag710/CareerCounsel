@@ -7,7 +7,10 @@ const cookieParser = require("cookie-parser");
 
 require("dotenv").config();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',  // Your frontend URL specifically
+    credentials: true
+  }));
 app.use(cookieParser());
 
 const {dbConnect} = require("./config/mongoose-connection");

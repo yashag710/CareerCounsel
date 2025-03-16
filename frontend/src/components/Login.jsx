@@ -7,9 +7,29 @@ function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullname, setFullname] = useState(''); // Changed variable name to match usage
+  const [fullname, setFullname] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Function to check user data after successful login
+  async function checkUserData(email) {
+    try {
+      const response = await fetch('http://localhost:3000/api/dataCheck', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error checking user data:', error);
+      return { check: false, error: true };
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     
@@ -19,7 +39,7 @@ function Login() {
     // Prepare request body based on whether it's login or signup
     const requestBody = isLogin 
       ? { email, password } 
-      : { fullname, email, password }; // This is correct now with matching variable name
+      : { fullname, email, password };
     
     // API endpoint
     const endpoint = isLogin ? '/api/login' : '/api/signup';
@@ -35,6 +55,7 @@ function Login() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
+        credentials: 'include'
       });
       
       // Parse response
@@ -47,18 +68,36 @@ function Login() {
           id: loadingToast,
         });
 
-        if(isLogin){
-          navigate("/userdash");
+        if (isLogin) {
+          // Check if user has filled career form
+          const userDataCheck = await checkUserData(email);
+          
+          if (userDataCheck.error) {
+            toast.error('Error checking user data. Redirecting to dashboard.');
+            navigate("/userdash");
+          } else if (userDataCheck.check) {
+            // User has skills, navigate to dashboard
+            navigate("/userdash");
+          } else {
+            // User doesn't have skills, navigate to career form
+            toast.error('Please complete your career profile first', {
+              duration: 5000,
+            });
+            navigate("/careerform");
+          }
+        } else {
+          // For signup, navigate to career form directly
+          toast.error('Please complete your career profile', {
+            duration: 5000,
+          });
+          navigate("/careerform");
         }
         
-        // Handle successful login/signup
+        // Console log for debugging
         console.log('Success:', data);
         
-        // Here you would typically:
-        // 1. Store the auth token
+        // Here you would typically store the auth token
         // localStorage.setItem('token', data.token);
-        // 2. Redirect to dashboard
-        // window.location.href = '/dashboard';
       } else {
         // Error toast
         toast.error(data.message || 'Something went wrong', {
@@ -100,7 +139,7 @@ function Login() {
                   <input
                     type="text"
                     value={fullname}
-                    onChange={(e) => setFullname(e.target.value)} // Fixed to update the correct state variable
+                    onChange={(e) => setFullname(e.target.value)}
                     className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                     placeholder="John Doe"
                     required
