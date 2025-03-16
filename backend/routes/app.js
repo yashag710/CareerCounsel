@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");  // Import JWT
+const jwt = require("jsonwebtoken");  
 const { loginUser, registerUser } = require('../controllers/authControllers');
 const { isLoggedIn } = require("../middlewares/isLoggedIn");
 const { getUserProfile } = require("../controllers/getUserProfile");
 const { dataCheck } = require("../controllers/dataCheck");
 const userModel = require("../models/userModel");
 const multer = require("multer");
-const { analyzeCareer } = require("../ai_path.mjs");  // Add this import
+const { analyzeCareer } = require("../ai_path.mjs"); 
 
-const upload = multer();  // Multer for file uploads
+const upload = multer();  
 
 // Login Routes
 router.get("/login", (req, res) => {
