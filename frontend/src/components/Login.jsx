@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Mail, Lock, User } from 'lucide-react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -33,7 +34,6 @@ function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: "include",
         body: JSON.stringify(requestBody),
       });
       
@@ -41,22 +41,37 @@ function Login() {
       const data = await response.json();
       
       // Handle response
-      if (data.success) {
+      if (response.ok) {
         // Success toast
         toast.success(isLogin ? 'Successfully signed in!' : 'Account created successfully!', {
           id: loadingToast,
         });
-
-  const handleSubmit = async (e) => {
-        e.preventDefault();
-        const res = await axios.post("http://localhost:3000/api/userdash", {
-          email,
-          password,
-          name
+        
+        // Handle successful login/signup
+        console.log('Success:', data);
+        
+        // Here you would typically:
+        // 1. Store the auth token
+        // localStorage.setItem('token', data.token);
+        // 2. Redirect to dashboard
+        // window.location.href = '/dashboard';
+      } else {
+        // Error toast
+        toast.error(data.message || 'Something went wrong', {
+          id: loadingToast,
         });
-        // Handle form submission
-        console.log(res);
-        console.log(isLogin ? 'Login' : 'Signup', { email, password, name });
+        
+        console.error('Error:', data);
+      }
+    } catch (error) {
+      // Network error toast
+      toast.error('Network error. Please try again.', {
+        id: loadingToast,
+      });
+      
+      console.error('Network error:', error);
+    } finally {
+      setLoading(false);
     }
   }
 
