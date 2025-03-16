@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 import Landing from "./Landing";
 import HowWeHelp from "./HowWeHelp";
 
-export default function Home(){
+export function Home(){
     return(
         <>
             <Navbar />
