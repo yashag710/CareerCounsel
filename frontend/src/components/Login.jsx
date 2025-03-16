@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Mail, Lock, User } from 'lucide-react';
-<<<<<<< HEAD
 import axios from 'axios';
 
-=======
-import toast, { Toaster } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
->>>>>>> 9b5964a7a06bc769820cbc47d13ee0c2483afeea
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
