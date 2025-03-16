@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema({
     city : String,
     country : String,
     experience : {
-        type : Number,
+        type : String,
         required : false
     },
     result : {
