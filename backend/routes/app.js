@@ -2,10 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { loginUser, registerUser } = require('../controllers/authControllers');
 
-// Middleware
-app.use(express.json());
-app.use(cors());
-
 router.get("/login" , (req, res) => {
     res.send("main");
 });

@@ -8,6 +8,9 @@ require("dotenv").config();
 app.use(express.json());
 app.use(cors());
 
+const {dbConnect} = require("./config/mongoose-connection");
+
+dbConnect();
 
 
 const appRoutes = require("./routes/app");
