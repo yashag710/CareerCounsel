@@ -8,7 +8,8 @@ const { dataCheck } = require("../controllers/dataCheck");
 const userModel = require("../models/userModel");
 const multer = require("multer");
 const { analyzeCareer } = require("../ai_path.mjs"); 
-import dotenv from 'dotenv';
+const dotenv = require("dotenv");
+dotenv.config();
 const upload = multer();  
 
 dotenv.config();
