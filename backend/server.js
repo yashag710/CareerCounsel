@@ -3,15 +3,16 @@ const cors = require("cors");
 const router = express.Router();
 const app = express();
 const PORT = process.env.PORT || 3000;
+const cookieParser = require("cookie-parser");
 
 require("dotenv").config();
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 const {dbConnect} = require("./config/mongoose-connection");
 
 dbConnect();
-
 
 const appRoutes = require("./routes/app");
 
