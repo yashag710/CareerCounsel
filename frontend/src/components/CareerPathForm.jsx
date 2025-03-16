@@ -16,6 +16,8 @@ const CareerPathForm = () => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [careerInterests, setCareerInterests] = useState([]);
   const [resume, setResume] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const addSkill = (skill) => {
     if (!selectedSkills.includes(skill)) {
@@ -45,15 +47,39 @@ const CareerPathForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
+    setLoading(true);
+    setMessage("");
+
+    const userData = {
       currentField,
       experience,
       selectedSkills,
       careerInterests,
       resume: resume ? resume.name : "No file uploaded",
-    });
+    };
+
+    try {
+      const response = await fetch("http://localhost:5000/api/update-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setMessage("Career paths generated successfully!");
+      } else {
+        setMessage(result.error || "Something went wrong.");
+      }
+    } catch (error) {
+      setMessage("Failed to connect to the server.");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -140,48 +166,29 @@ const CareerPathForm = () => {
                     </div>
                   </div>
 
-                  {/* Career Interests */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Career Interests</label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {careerInterestOptions.map((interest) => (
-                        <label key={interest} className="inline-flex items-center border border-gray-300 rounded-md p-3 hover:bg-gray-50 cursor-pointer transition">
-                          <input
-                            type="checkbox"
-                            checked={careerInterests.includes(interest)}
-                            onChange={() => toggleCareerInterest(interest)}
-                            className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
-                          />
-                          <span className="ml-2 text-sm text-gray-700">{interest}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Resume Upload */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700">Upload Resume</label>
-                    <div className="mt-1 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-md px-6 pt-5 pb-6">
-                      <input
-                        id="resume-upload"
-                        type="file"
-                        accept=".pdf,.docx"
-                        onChange={handleResumeUpload}
-                        className="hidden"
-                      />
-                      <label htmlFor="resume-upload" className="cursor-pointer text-blue-600 hover:text-blue-500">
-                        Click to upload
-                      </label>
-                    </div>
-                    {resume && <p className="text-sm text-gray-700 mt-2">Uploaded: {resume.name}</p>}
-                  </div>
-
-                  {/* Submit Button */}
+                  {/* Submit Button with Loading Animation */}
                   <div className="flex justify-center">
-                    <button type="submit" className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition duration-200">
-                      Generate Career Paths
+                    <button
+                      type="submit"
+                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition duration-200 flex items-center"
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0"></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        "Generate Career Paths"
+                      )}
                     </button>
                   </div>
+
+                  {/* Status Message */}
+                  {message && <p className="text-center text-lg font-semibold mt-4 text-gray-700">{message}</p>}
                 </form>
               </div>
             </div>
