@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { User, MessageSquare, Briefcase, ChevronRight, Send, CheckCircle, Circle, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, MessageSquare, ChevronRight, Send, CheckCircle, Circle, X } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 
-// Mock data - In a real app, this would come from an API
+// Mock data for career paths - In a real app, this might also come from an API
 const careerPaths = {
   'software-engineering': {
     title: 'Software Engineering',
@@ -75,6 +76,43 @@ function UserDash() {
     { type: 'bot', content: 'Hello! How can I help you with your career journey today?' }
   ]);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch user profile data from the backend
+    const fetchUserProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:3000/getUserProfile`, {
+          method: 'GET',
+          credentials: 'include', // Important for cookies to be sent
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch user profile');
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+          setUser(data.user);
+        } else {
+          throw new Error(data.message || 'Failed to load user data');
+        }
+      } catch (err) {
+        setError(err.message);
+        toast.error('Error loading profile: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -93,8 +131,39 @@ function UserDash() {
   const totalCheckpoints = selectedCareerPath.checkpoints.length;
   const progressPercentage = (completedCheckpoints / totalCheckpoints) * 100;
 
+  // Show loading state while fetching user data
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if there was a problem fetching data
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-lg shadow-lg">
+          <p className="text-red-500 text-xl mb-4">Error loading your profile</p>
+          <p className="text-gray-600">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <Toaster position="top-center" />
       <div className="container mx-auto p-6">
         <div className="flex gap-6">
           {/* User Profile Section - Sticky */}
@@ -104,8 +173,8 @@ function UserDash() {
                 <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mb-4">
                   <User size={48} className="text-gray-600" />
                 </div>
-                <h2 className="text-xl font-bold">John Doe</h2>
-                <p className="text-gray-600">Software Engineer</p>
+                <h2 className="text-xl font-bold">{user?.fullname || 'User'}</h2>
+                <p className="text-gray-600">{user?.skills?.length > 0 ? user.skills[0] : 'Professional'}</p>
                 <div className="w-full mt-6">
                   <div className="mb-4">
                     <h3 className="font-semibold text-gray-700">Progress Overview</h3>
@@ -114,9 +183,9 @@ function UserDash() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-600">Email: john.doe@example.com</p>
-                    <p className="text-sm text-gray-600">Experience: 2 years</p>
-                    <p className="text-sm text-gray-600">Location: New York, USA</p>
+                    <p className="text-sm text-gray-600">Email: {user?.email}</p>
+                    <p className="text-sm text-gray-600">Experience: {user?.experience || 0} years</p>
+                    <p className="text-sm text-gray-600">Location: {user?.city ? `${user.city}, ${user.country}` : 'Not specified'}</p>
                   </div>
                 </div>
               </div>
@@ -182,7 +251,14 @@ function UserDash() {
                           <h4 className="font-semibold text-gray-700 mb-2">Key Skills</h4>
                           <div className="flex flex-wrap gap-2">
                             {checkpoint.skills.map((skill, idx) => (
-                              <span key={idx} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                              <span 
+                                key={idx} 
+                                className={`px-3 py-1 rounded-full text-sm ${
+                                  user?.skills?.includes(skill) 
+                                    ? 'bg-green-100 text-green-700' 
+                                    : 'bg-blue-100 text-blue-700'
+                                }`}
+                              >
                                 {skill}
                               </span>
                             ))}
