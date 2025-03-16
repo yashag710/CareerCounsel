@@ -62,8 +62,9 @@ const skillsOptions = [
 // Convert skillsOptions to the format needed for react-select
 const skillSelectOptions = skillsOptions.map(skill => ({ value: skill, label: skill }));
 
-const navigate = useNavigate();
 const CareerPathForm = () => {
+  
+  const navigate = useNavigate();
   const [currentField, setCurrentField] = useState("");
   const [age , setAge] = useState('');
   const [error , setError] = useState(null);
