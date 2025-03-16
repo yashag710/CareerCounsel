@@ -52,7 +52,6 @@ function Login() {
           id: loadingToast,
         });
 
-<<<<<<< HEAD
   const handleSubmit = async (e) => {
         e.preventDefault();
         const res = await axios.post("http://localhost:3000/api/userdash", {
@@ -63,37 +62,6 @@ function Login() {
         // Handle form submission
         console.log(res);
         console.log(isLogin ? 'Login' : 'Signup', { email, password, name });
-=======
-        if(isLogin){
-          navigate("/userdash")
-        }
-        
-        // Handle successful login/signup
-        console.log('Success:', data);
-        
-        // Here you would typically:
-        // 1. Store the auth token
-        // localStorage.setItem('token', data.token);
-        // 2. Redirect to dashboard
-        // window.location.href = '/dashboard';
-      } else {
-        // Error toast
-        toast.error(data.message || 'Something went wrong', {
-          id: loadingToast,
-        });
-        
-        console.error('Error:', data);
-      }
-    } catch (error) {
-      // Network error toast
-      toast.error("Incorrect Credentials", {
-        id: loadingToast,
-      });
-      
-      console.error('Network error:', error);
-    } finally {
-      setLoading(false);
->>>>>>> 9b5964a7a06bc769820cbc47d13ee0c2483afeea
     }
   }
 
