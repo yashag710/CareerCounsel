@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight, Mail, Lock, User } from 'lucide-react';
+import axios from 'axios';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -7,9 +8,15 @@ function Login() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
-  function handleSubmit(e) {
+  const handleSubmit = async (e) => {
         e.preventDefault();
+        const res = await axios.post("http://localhost:3000/api/userdash", {
+          email,
+          password,
+          name
+        });
         // Handle form submission
+        console.log(res);
         console.log(isLogin ? 'Login' : 'Signup', { email, password, name });
     }
 
