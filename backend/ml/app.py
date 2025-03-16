@@ -21,6 +21,7 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
+        print("Yes")
         data = request.get_json()
         skills = data['skills']
         age = data['age']
