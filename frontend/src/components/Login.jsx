@@ -41,11 +41,15 @@ function Login() {
       const data = await response.json();
       
       // Handle response
-      if (response.ok) {
+      if (data.success) {
         // Success toast
         toast.success(isLogin ? 'Successfully signed in!' : 'Account created successfully!', {
           id: loadingToast,
         });
+
+        if(isLogin){
+          navigate("/userdash");
+        }
         
         // Handle successful login/signup
         console.log('Success:', data);
