@@ -123,9 +123,17 @@ const CareerPathForm = () => {
         experience,
         skills: skillsStr,
         result: recommendedCareer,
+        currentField,
       }, { withCredentials: true });
-  
-      setMessage(response2.data.message || "Career recommendation saved successfully!");
+
+      // Third request: Get career analysis
+      const analysisResponse = await axios.get("http://localhost:3000/api/analyze-career", {
+        withCredentials: true
+      });
+
+      if (analysisResponse.data.success) {
+        setMessage("Career path analysis completed successfully!");
+      }
 
       navigate("/userdash");
     } catch (err) {

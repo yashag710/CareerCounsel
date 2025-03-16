@@ -24,25 +24,36 @@ export async function analyzeCareer(result) {
       throw new Error('Career result parameter is required');
     }
 
+    // First check if we already have this analysis cached
+    const existingAnalysis = await careerModel.findOne({ name: result });
+    if (existingAnalysis && existingAnalysis.analysis) {
+      return existingAnalysis.analysis;
+    }
+
     const client = new OpenAI({ baseURL: endpoint, apiKey: token });
     const response = await client.chat.completions.create({
       messages: [
-        { role: "system", content: "You are a helpful assistant." },
+        { role: "system", content: "You are a career path advisor specialized in creating detailed professional development roadmaps." },
         { 
           role: "user", 
-          content: `Analyze this ${result} and for this particular field in industry provide checkpoints for the post with each checkpoint including four prerequisites and four skills that can be earned from that checkpoint and any 2 resources for achieving that checkpoint.`
+          content: `Create a detailed career development path for ${result}. Include:
+          1. Key milestones/checkpoints
+          2. Prerequisites for each checkpoint
+          3. Skills that can be gained at each stage
+          4. Recommended learning resources
+          5. Potential job titles and roles at each level`
         }
       ],
-      temperature: 1.0,
+      temperature: 0.7,
       top_p: 1.0,
-      max_tokens: 1000,
+      max_tokens: 1500,
       model: modelName
     });
 
     const analysisResult = response.choices[0].message.content;
     
-    // Update or create career analysis in MongoDB
-    const career = await careerModel.findOneAndUpdate(
+    // Cache the analysis in MongoDB
+    await careerModel.findOneAndUpdate(
       { name: result },
       { analysis: analysisResult },
       { upsert: true, new: true }
@@ -50,7 +61,7 @@ export async function analyzeCareer(result) {
     
     return analysisResult;
   } catch (err) {
-    console.error("Error occurred:", err);
+    console.error("Analysis generation error:", err);
     throw err;
   }
 }
