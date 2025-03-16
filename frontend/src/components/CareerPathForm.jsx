@@ -101,28 +101,38 @@ const CareerPathForm = () => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+    setError(null);
+  
     // Extract skill values and join with semicolon
     const skillsStr = selectedSkills.map(option => option.value).join(';');
-
+  
     try {
-      const response1 = await axios.post('http://localhost:5000/predict', {
+      // First request: Send data to ML model for career prediction
+      const response1 = await axios.post("http://localhost:5000/predict", {
         skills: skillsStr,
-        age: age
+        age: age,
       });
-      setResult(response1.data.Recommended_Career);
-      setError(null);
-      
+  
+      const recommendedCareer = response1.data.Recommended_Career;
+      setResult(recommendedCareer);
+  
+      // Second request: Send ML result + user data to backend for storage
+      const response2 = await axios.post("/careerform", {
+        experience,
+        skills: skillsStr,
+        result: recommendedCareer,
+      }, { withCredentials: true });
+  
+      setMessage(response2.data.message || "Career recommendation saved successfully!");
     } catch (err) {
       console.error(err);
-      const errorMsg = (err.response && err.response.data && err.response.data.error)
-        ? err.response.data.error
-        : err.message || "An unexpected error occurred.";
+      const errorMsg = err.response?.data?.error || err.message || "An unexpected error occurred.";
       setError("Error: " + errorMsg);
       setResult(null);
     }
+  
     setLoading(false);
   };
-
   return (
     <div id="career-path" className="min-h-screen w-full bg-gray-50">
       <div className="container mx-auto px-4">
