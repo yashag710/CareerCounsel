@@ -4,9 +4,9 @@ import userModel from "./models/userModel.js";
 import careerModel from "./models/careerModel.js";
 import jwt from 'jsonwebtoken';
 
-const token = process.env.AI_TOKEN;
-const endpoint = "https://models.inference.ai.azure.com";
-const modelName = "gpt-4o";
+const token = process.env.ai_token;
+const endpoint = process.env.endpoint;
+const modelName = process.env.model;
 
 export async function analyzeCareer(result) {
   try {
