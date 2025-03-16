@@ -53,7 +53,7 @@ router.post("/careerform", upload.single("resume"), async (req, res) => {
             return res.status(404).json({ message: "User not found!" });
         }
 
-        res.redirect("/userdash");
+        // res.redirect("/userdash");
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

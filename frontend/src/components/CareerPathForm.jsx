@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Select from 'react-select';
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const skillsOptions = [
   'Adobe XD',
   'C++',
@@ -62,6 +62,7 @@ const skillsOptions = [
 // Convert skillsOptions to the format needed for react-select
 const skillSelectOptions = skillsOptions.map(skill => ({ value: skill, label: skill }));
 
+const navigate = useNavigate();
 const CareerPathForm = () => {
   const [currentField, setCurrentField] = useState("");
   const [age , setAge] = useState('');
@@ -124,6 +125,8 @@ const CareerPathForm = () => {
       }, { withCredentials: true });
   
       setMessage(response2.data.message || "Career recommendation saved successfully!");
+
+      navigate("/userdash");
     } catch (err) {
       console.error(err);
       const errorMsg = err.response?.data?.error || err.message || "An unexpected error occurred.";
