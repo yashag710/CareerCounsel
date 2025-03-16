@@ -60,7 +60,7 @@ router.post("/careerform", upload.single("resume"), async (req, res) => {
     }
 });
 
-Update the analyze-career route
+// Update the analyze-career route
 router.get("/analyze-career", isLoggedIn, async (req, res) => {
     try {
         // Get user email from token
