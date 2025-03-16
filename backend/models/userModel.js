@@ -28,6 +28,9 @@ const userSchema = mongoose.Schema({
     experience : {
         type : Number,
         required : false
+    },
+    result : {
+        type : String,
     }
 });
 

@@ -226,7 +226,6 @@ const CareerPathForm = () => {
                       )}
                     </button>
                   </div>
-
                   {/* Status Message */}
                   {message && <p className="text-center text-lg font-semibold mt-4 text-gray-700">{message}</p>}
                 </form>
