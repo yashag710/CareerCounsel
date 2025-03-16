@@ -11,6 +11,7 @@ exports.dataCheck = async function (req, res) {
     }
 
     if (user.skills && user.skills.length > 0) {
+      console.log(user.skills);
       return res.status(200).json({
         check : true
       })

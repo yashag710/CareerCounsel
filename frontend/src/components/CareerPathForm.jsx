@@ -117,7 +117,7 @@ const CareerPathForm = () => {
       setResult(recommendedCareer);
   
       // Second request: Send ML result + user data to backend for storage
-      const response2 = await axios.post("/careerform", {
+      const response2 = await axios.post("http://localhost:3000/api/careerform", {
         experience,
         skills: skillsStr,
         result: recommendedCareer,
