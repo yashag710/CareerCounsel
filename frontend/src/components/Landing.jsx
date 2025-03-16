@@ -3,7 +3,6 @@ import Navbar from "./Navbar";
 function Landing(){
     return (
       <>
-      <Navbar></Navbar>
         <div className="relative bg-gradient-to-r from-blue-50 to-indigo-50 pb-20">
           {/* Container */}
           <div className="container mx-auto px-4 pt-24 pb-16">
