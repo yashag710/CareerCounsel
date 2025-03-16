@@ -1,6 +1,13 @@
 import React from "react";
-
+import { Link } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 const Navbar = () => {
+
+  const navigate = useNavigate();
+  const handleLogin = ()=>{
+    navigate("/login");
+  }
+
   return (
     <nav className="bg-white shadow-md border-b border-gray-200">
       <div className="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -28,7 +35,7 @@ const Navbar = () => {
         {/* Signup/Login Buttons */}
         <div className="flex space-x-4">
           
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition" onClick={handleLogin}>
             Login or Sign Up
           </button>
         </div>
