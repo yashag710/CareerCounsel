@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const userModel = require("../models/users");
-const joi = require('joi');
+const userModel = require("../models/userModel");
 const bcrypt = require('bcrypt');
 const { generateToken } = require("../utils/generateToken");
 
-module.exports.registerUser = async function(req,res){
+exports.registerUser = async function(req,res){
     try{
         let present = await userModel.findOne({email : req.body.email});
         if(!present){
@@ -33,7 +32,7 @@ else {
     }
 }
 
-module.exports.loginUser = async function(req,res){
+exports.loginUser = async function(req,res){
     let {email , password} = req.body;
     let user = await userModel.findOne({ email : email});
     if(!user){return res.status(404).send("User not found");
@@ -50,7 +49,7 @@ module.exports.loginUser = async function(req,res){
     });
 }
 
-module.exports.logout = async function(req,res){
+exports.logout = async function(req,res){
     res.cookie("token" , "");
     req.flash("error" , "Succesfully logged out");
     res.redirect("/");
