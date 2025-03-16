@@ -45,7 +45,10 @@ exports.loginUser = async function(req,res){
             res.redirect("/datacheck");
         }
         else{
-            return res.status(501).send("Incorrect credentials");
+            return res.status(501).json({
+                success: false,
+                message: "Incorrect credentials"
+            });
         }
     });
 }
