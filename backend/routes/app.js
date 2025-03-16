@@ -60,28 +60,28 @@ router.post("/careerform", upload.single("resume"), async (req, res) => {
     }
 });
 
-// Update the analyze-career route
-// router.get("/analyze-career", isLoggedIn, async (req, res) => {
-//     try {
-//         // Get user email from token
-//         const userToken = req.cookies.token;
-//         const decoded = jwt.verify(userToken, process.env.JWT_KEY);
-//         const email = decoded.email;
+Update the analyze-career route
+router.get("/analyze-career", isLoggedIn, async (req, res) => {
+    try {
+        // Get user email from token
+        const userToken = req.cookies.token;
+        const decoded = jwt.verify(userToken, process.env.JWT_KEY);
+        const email = decoded.email;
 
-//         // Fetch user data from MongoDB
-//         const user = await userModel.findOne({ email });
-//         if (!user || !user.result) {
-//             return res.status(400).json({ 
-//                 success: false, 
-//                 message: "User result not found" 
-//             });
-//         }
+        // Fetch user data from MongoDB
+        const user = await userModel.findOne({ email });
+        if (!user || !user.result) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "User result not found" 
+            });
+        }
 
-//         const analysis = await analyzeCareer(user.result);
-//         res.json({ success: true, analysis });
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
+        const analysis = await analyzeCareer(user.result);
+        res.json({ success: true, analysis });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 module.exports = router;
