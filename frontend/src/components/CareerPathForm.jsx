@@ -1,84 +1,125 @@
 import React, { useState } from "react";
+import Select from 'react-select';
+import axios from "axios";
 
-const skillOptions = ["JavaScript", "React", "Node.js"];
-const careerInterestOptions = [
-  "Remote Work",
-  "Leadership",
-  "Work-Life Balance",
-  "Entrepreneurship",
-  "High Salary",
-  "Social Impact",
+const skillsOptions = [
+  'Adobe XD',
+  'C++',
+  'CAD',
+  'CSS',
+  'Canva',
+  'Circuit Design',
+  'Content Writing',
+  'Contracts',
+  'Corporate Law',
+  'Criminal Law',
+  'Django',
+  'Email Marketing',
+  'Embedded Systems',
+  'Encryption',
+  'Ethical Hacking',
+  'Express',
+  'Figma',
+  'Git',
+  'Google Ads',
+  'HTML',
+  'Html',
+  'Illustrator',
+  'Java',
+  'JavaScript',
+  'Legal Research',
+  'Litigation',
+  'MATLAB',
+  'Machine Learning',
+  'Malware Analysis',
+  'Manufacturing',
+  'Material Science',
+  'Medical Diagnosis',
+  'MongoDB',
+  'Network Security',
+  'Node.js',
+  'Pandas',
+  'Pathology',
+  'Patient Care',
+  'Pharmacology',
+  'Photoshop',
+  'Power Systems',
+  'Python',
+  'R',
+  'REST API',
+  'React',
+  'SEO',
+  'SQL',
+  'Social Media Marketing',
+  'SolidWorks',
+  'Statistics',
+  'Surgery',
+  'TensorFlow',
+  'Thermodynamics',
+  'UI/UX'
 ];
+
+// Convert skillsOptions to the format needed for react-select
+const skillSelectOptions = skillsOptions.map(skill => ({ value: skill, label: skill }));
 
 const CareerPathForm = () => {
   const [currentField, setCurrentField] = useState("");
+  const [age , setAge] = useState('');
+  const [error , setError] = useState(null);
+  const [result, setResult] = useState(null);
   const [experience, setExperience] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
-  const [careerInterests, setCareerInterests] = useState([]);
-  const [resume, setResume] = useState(null);
+  // const [careerInterests, setCareerInterests] = useState([]);
+  // const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const addSkill = (skill) => {
-    if (!selectedSkills.includes(skill)) {
-      setSelectedSkills([...selectedSkills, skill]);
-    }
+  // Add this new handler for react-select
+  const handleSkillChange = (selectedOptions) => {
+    setSelectedSkills(selectedOptions);
   };
 
-  const removeSkill = (skill) => {
-    setSelectedSkills(selectedSkills.filter((s) => s !== skill));
-  };
+  // const toggleCareerInterest = (interest) => {
+  //   setCareerInterests((prev) =>
+  //     prev.includes(interest) ? prev.filter((i) => i !== interest) : [...prev, interest]
+  //   );
+  // };
 
-  const toggleCareerInterest = (interest) => {
-    setCareerInterests((prev) =>
-      prev.includes(interest) ? prev.filter((i) => i !== interest) : [...prev, interest]
-    );
-  };
-
-  const handleResumeUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const allowedTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-      if (!allowedTypes.includes(file.type)) {
-        alert("Please upload a PDF or DOCX file.");
-        return;
-      }
-      setResume(file);
-    }
-  };
+  // const handleResumeUpload = (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const allowedTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+  //     if (!allowedTypes.includes(file.type)) {
+  //       alert("Please upload a PDF or DOCX file.");
+  //       return;
+  //     }
+  //     setResume(file);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-
-    const userData = {
-      currentField,
-      experience,
-      selectedSkills,
-      careerInterests,
-      resume: resume ? resume.name : "No file uploaded",
-    };
+    // Extract skill values and join with semicolon
+    const skillsStr = selectedSkills.map(option => option.value).join(';');
 
     try {
-      const response = await fetch("http://localhost:5000/api/update-user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
+      const response1 = await axios.post('http://localhost:5000/predict', {
+        skills: skillsStr,
+        age: age
       });
-
-      const result = await response.json();
-      if (response.ok) {
-        setMessage("Career paths generated successfully!");
-      } else {
-        setMessage(result.error || "Something went wrong.");
-      }
-    } catch (error) {
-      setMessage("Failed to connect to the server.");
+      setResult(response1.data.Recommended_Career);
+      setError(null);
+      
+    } catch (err) {
+      console.error(err);
+      const errorMsg = (err.response && err.response.data && err.response.data.error)
+        ? err.response.data.error
+        : err.message || "An unexpected error occurred.";
+      setError("Error: " + errorMsg);
+      setResult(null);
     }
-
     setLoading(false);
   };
 
@@ -133,37 +174,36 @@ const CareerPathForm = () => {
                         <option>10+ years</option>
                       </select>
                     </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Age
+                      </label>
+                      <input
+                        type="number"
+                        value={age}
+                        onChange={(e) => setAge(e.target.value)}
+                        placeholder="Enter your age"
+                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
                   </div>
 
                   {/* Skills Selection */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Key Skills</label>
-                    <select
-                      onChange={(e) => addSkill(e.target.value)}
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Select a skill</option>
-                      {skillOptions.map((skill) => (
-                        <option key={skill} value={skill}>
-                          {skill}
-                        </option>
-                      ))}
-                    </select>
-
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {selectedSkills.map((skill) => (
-                        <span key={skill} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {skill}
-                          <button
-                            type="button"
-                            className="ml-1 text-blue-600 hover:text-blue-800"
-                            onClick={() => removeSkill(skill)}
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Key Skills
+                    </label>
+                    <Select
+                      isMulti
+                      options={skillSelectOptions}
+                      value={selectedSkills}
+                      onChange={handleSkillChange}
+                      placeholder="Search and select skills..."
+                      closeMenuOnSelect={false}
+                      className="rounded-lg"
+                      classNamePrefix="select"
+                    />
                   </div>
 
                   {/* Submit Button with Loading Animation */}
@@ -190,6 +230,8 @@ const CareerPathForm = () => {
                   {/* Status Message */}
                   {message && <p className="text-center text-lg font-semibold mt-4 text-gray-700">{message}</p>}
                 </form>
+                {result && <h2>Recommended Career: {result}</h2>}
+                {error && <h3>{error}</h3>}
               </div>
             </div>
           </div>
